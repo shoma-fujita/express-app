@@ -1,21 +1,26 @@
 const express = require('express');
 const router = express.Router();
 
-// app.jsでアドレスと呼び出される設定は済みなので、ここの「/」は「/hello/ooo」の/ooo部分
 router.get('/', (req, res, next) => {
+  var msg = '※何か書いて送信して下さい。';
+  // セッションに値が保存されているときは、それを取り出して表示している（hello.ejsにレンダリングしている）
+  if (req.session.message != undefined) {
+    msg = "Last Message: " + req.session.message;
+  }
   var data = {
     title: 'Hello!',
-    content: '※何か書いて送信して下さい。'
+    content: msg
   };
   res.render('hello', data);
 });
 
 router.post('/post', (req, res, next) => {
-  // postで送信されたメッセージの中身を取り出すことができる
   var msg = req.body['message'];
+  // セッションにIDを保存している
+  req.session.message = msg;
   var data = {
     title: 'Hello!',
-    content: 'あなたは、「' + msg + '」と送信しました。'
+    content: "Last Message: " + req.session.message
   };
   res.render('hello', data);
 });
