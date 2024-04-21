@@ -6,6 +6,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 // HTTPリクエストのログ出力
 var logger = require('morgan');
+const session = require('express-session');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -23,6 +24,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+var session_opt = {
+  // 秘密キーで、セッションID等でハッシュ化するときに元となるキー
+  secret: 'keyboard cat',
+  // セッションストアに強制的に値を保存させるもの
+  resave: false,
+  // 初期化されていない値を保存するためのもの
+  saveUninitialized: false, 
+  // セッションの有効期限
+  cookie: { maxAge: 60 * 60 * 1000 }
+};
+app.use(session(session_opt));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
